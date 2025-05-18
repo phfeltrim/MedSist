@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { fetcher } from "@/lib/apiClient";
 import { Link } from "wouter";
 import { 
   Building2, 
@@ -84,6 +85,12 @@ const mockActivities = [
     timestamp: "Ontem, 09:15"
   }
 ];
+
+const { data: statistics, isLoading, error } = useQuery({
+  queryKey: ["/api/statistics"],
+  queryFn: () => fetcher("/api/statistics"),
+  staleTime: 60000,
+});
 
 export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);

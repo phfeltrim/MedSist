@@ -23,7 +23,7 @@ export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
-    allowedHosts: true,
+    //allowedHosts: true,
   };
 
   const vite = await createViteServer({
@@ -47,9 +47,7 @@ export async function setupVite(app: Express, server: Server) {
     try {
       const clientTemplate = path.resolve(
         import.meta.dirname,
-        "..",
-        "client",
-        "index.html",
+        "../client/index.html",
       );
 
       // always reload the index.html file from disk incase it changes
