@@ -86,12 +86,6 @@ const mockActivities = [
   }
 ];
 
-const { data: statistics, isLoading, error } = useQuery({
-  queryKey: ["/api/statistics"],
-  queryFn: () => fetcher("/api/statistics"),
-  staleTime: 60000,
-});
-
 export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
 

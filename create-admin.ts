@@ -1,6 +1,8 @@
-import { db } from "./server/db";
-import { users } from "./shared/schema";
-import { hashPassword } from "./server/auth";
+import 'dotenv/config';
+
+import { db } from "./server/db.js";
+import { users } from "./shared/schema.js";
+import { hashPassword } from "./server/auth.js";
 import { eq } from "drizzle-orm";
 
 async function createAdminUser() {
