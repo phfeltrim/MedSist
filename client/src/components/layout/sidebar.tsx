@@ -127,7 +127,7 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="p-4 border-b border-neutral-100">
         <div className="flex items-center justify-center md:justify-start">
           <Building2 className="text-primary-500 h-6 w-6 mr-2" />
-          <h1 className="font-heading font-semibold text-xl text-primary-500">UBS Manager</h1>
+          <h1 className="font-heading font-semibold text-xl text-primary-500">UBS Maneger</h1>
         </div>
       </div>
       

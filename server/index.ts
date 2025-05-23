@@ -1,6 +1,8 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import session from "express-session";
+import createMemoryStore from "memorystore";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -13,15 +15,27 @@ import { setupVite, serveStatic, log } from "./vite";
 
 console.log("DATABASE_URL no process.env:", process.env.DATABASE_URL);
 
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+const MemoryStore = createMemoryStore(session);
 
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
+  session({
+    secret: process.env.SESSION_SECRET || "segredo-forte-aqui",
+    resave: false,
+    saveUninitialized: false,
+    store: new MemoryStore({ checkPeriod: 86400000 }), // 24h
+    cookie: {
+      secure: false, // true somente em produção com HTTPS
+      httpOnly: true,
+      sameSite: "lax",
+    },
+  })
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
     capturedJsonResponse = bodyJson;

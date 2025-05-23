@@ -80,7 +80,7 @@ export function EmployeeForm({ employeeId, isEdit = false, onComplete }: Employe
         registrationNumber: employee.registrationNumber || "",
         ubsId: employee.ubsId,
         isActive: employee.isActive,
-        password: "", // Password is not retrieved for security reasons
+        password: "", //Senha não defiida
       });
       setLoading(false);
     }

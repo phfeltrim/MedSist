@@ -19,7 +19,7 @@ import { RecentPatients } from "@/components/dashboard/recent-patients";
 import { ActivityLog } from "@/components/dashboard/activity-log";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Mock data - would be replaced with real API calls
+// Mock data - Trocar pelos dados do banco
 const mockRecentPatients = [
   {
     id: 1,
@@ -104,8 +104,6 @@ export default function Dashboard() {
             { label: "Início", path: "/" },
             { label: "Dashboard" }
           ]}
-          actionLabel="Novo Prontuário"
-          actionPath="/medical-records/new"
         />
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
@@ -161,28 +159,28 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent className="p-5">
                   <div className="grid grid-cols-2 gap-4">
-                    <Link href="/medical-records/new" className="block">
+                    <Link href="/medical-records" >
                       <div className="flex flex-col items-center justify-center p-4 bg-neutral-50 rounded-lg hover:bg-primary-50 transition-colors">
                         <ClipboardList className="text-primary-500 h-6 w-6 mb-2" />
                         <span className="text-sm text-center font-medium">Novo Prontuário</span>
                       </div>
                     </Link>
                     
-                    <Link href="/employees/new" className="block">
+                    <Link href="/employees">
                       <div className="flex flex-col items-center justify-center p-4 bg-neutral-50 rounded-lg hover:bg-primary-50 transition-colors">
                         <UserPlus className="text-primary-500 h-6 w-6 mb-2" />
                         <span className="text-sm text-center font-medium">Novo Funcionário</span>
                       </div>
                     </Link>
                     
-                    <Link href="/medical-records" className="block">
+                    <Link href="/medical-records">
                       <div className="flex flex-col items-center justify-center p-4 bg-neutral-50 rounded-lg hover:bg-primary-50 transition-colors">
                         <Search className="text-primary-500 h-6 w-6 mb-2" />
                         <span className="text-sm text-center font-medium">Buscar Paciente</span>
                       </div>
                     </Link>
                     
-                    <Link href="/reports" className="block">
+                    <Link href="/reports">
                       <div className="flex flex-col items-center justify-center p-4 bg-neutral-50 rounded-lg hover:bg-primary-50 transition-colors">
                         <BarChart3 className="text-primary-500 h-6 w-6 mb-2" />
                         <span className="text-sm text-center font-medium">Relatórios</span>

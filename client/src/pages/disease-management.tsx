@@ -33,8 +33,6 @@ export default function DiseaseManagement() {
             { label: "Início", path: "/" },
             { label: "Doenças" }
           ]}
-          actionLabel="Nova Doença"
-          onActionClick={handleNewDisease}
         />
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">

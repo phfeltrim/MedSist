@@ -33,8 +33,6 @@ export default function EmployeeManagement() {
             { label: "Início", path: "/" },
             { label: "Funcionários" },
           ]}
-          actionLabel="Novo Funcionário"
-          onActionClick={handleNewEmployee}
         />
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">

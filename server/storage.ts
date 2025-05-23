@@ -51,7 +51,17 @@ export interface IStorage {
   createMedicalRecord(record: InsertMedicalRecord): Promise<MedicalRecord>;
   updateMedicalRecord(id: number, data: Partial<InsertMedicalRecord>): Promise<MedicalRecord | undefined>;
   deleteMedicalRecord(id: number): Promise<boolean>;
-
+  getMedicalRecordsReport(): Promise<{
+      id: number;
+      patientName: string;
+      patientBirthDate: Date;
+      status: string;
+      createdAt: Date | null;
+      updatedAt: Date | null;
+      diseaseName: string | null;
+      ubsName: string | null;
+      employeeName: string | null;
+    }[]>;
   // Statistics
   getStatistics(): Promise<any>;
 
@@ -184,7 +194,7 @@ export class DatabaseStorage implements IStorage {
   async getAllMedicalRecords(): Promise<MedicalRecord[]> {
     return await db.select().from(medicalRecords).orderBy(desc(medicalRecords.createdAt));
   }
-
+  
   async getMedicalRecordsByUbs(ubsId: number): Promise<MedicalRecord[]> {
     return await db.select().from(medicalRecords).where(eq(medicalRecords.ubsId, ubsId));
   }
@@ -215,6 +225,36 @@ export class DatabaseStorage implements IStorage {
   async deleteMedicalRecord(id: number): Promise<boolean> {
     await db.delete(medicalRecords).where(eq(medicalRecords.id, id));
     return true;
+  }
+
+    async getMedicalRecordsReport(): Promise<{
+    id: number;
+    patientName: string;
+    patientBirthDate: Date;
+    status: string;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+    diseaseName: string | null;
+    ubsName: string | null;
+    employeeName: string | null;
+  }[]> {
+    return await db
+      .select({
+        id: medicalRecords.id,
+        patientName: medicalRecords.patientName,
+        patientBirthDate: medicalRecords.patientBirthDate,
+        status: medicalRecords.status,
+        createdAt: medicalRecords.createdAt,
+        updatedAt: medicalRecords.updatedAt,
+        diseaseName: diseases.name,
+        ubsName: ubs.name,
+        employeeName: employees.name,
+      })
+      .from(medicalRecords)
+      .leftJoin(diseases, eq(medicalRecords.diseaseId, diseases.id))
+      .leftJoin(ubs, eq(medicalRecords.ubsId, ubs.id))
+      .leftJoin(employees, eq(medicalRecords.employeeId, employees.id))
+      .orderBy(desc(medicalRecords.createdAt));
   }
 
   // Statistics
@@ -378,6 +418,32 @@ export class MemStorage implements IStorage {
   async getAllMedicalRecords(): Promise<MedicalRecord[]> {
     return Array.from(this.medicalRecordsList.values())
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  async getMedicalRecordsReport(): Promise<{
+  id: number;
+  patientName: string;
+  patientBirthDate: Date;
+  status: string;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  diseaseName: string | null;
+  ubsName: string | null;
+  employeeName: string | null;
+  }[]> {
+    const records = Array.from(this.medicalRecordsList.values());
+
+    return records.map((r) => ({
+      id: r.id,
+      patientName: r.patientName,
+      patientBirthDate: r.patientBirthDate,
+      status: r.status,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      diseaseName: this.diseasesList.get(r.diseaseId!)?.name ?? null,
+      ubsName: this.ubsList.get(r.ubsId!)?.name ?? null,
+      employeeName: this.employeesList.get(r.employeeId!)?.name ?? null,
+    }));
   }
 
   async getMedicalRecordsByUbs(ubsId: number): Promise<MedicalRecord[]> {

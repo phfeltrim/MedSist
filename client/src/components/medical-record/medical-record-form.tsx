@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { date, z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
@@ -22,7 +22,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 // Create a form schema based on the sifilesCongenitaSchema
 const medicalRecordFormSchema = z.object({
   patientName: z.string().min(3, "Nome do paciente deve ter pelo menos 3 caracteres"),
-  patientBirthDate: z.string().min(1, "Data de nascimento é obrigatória"),
+  patientBirthDate: z.string().min(1, "Data de nascimento é obrigatória")
+  .transform((str) => new Date(str))
+  .refine((date) => !isNaN(date.getTime()),{message: "Data inválida",}),
   diseaseId: z.number({
     required_error: "Selecione uma doença",
   }),
@@ -153,7 +155,7 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
     resolver: zodResolver(medicalRecordFormSchema),
     defaultValues: {
       patientName: "",
-      patientBirthDate: "",
+      patientBirthDate: new Date(),
       diseaseId: 0,
       ubsId: 0,
       status: "active",
@@ -166,7 +168,7 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
     if (recordData) {
       form.reset({
         patientName: recordData.patientName,
-        patientBirthDate: new Date(recordData.patientBirthDate).toISOString().split('T')[0],
+        patientBirthDate: new Date(recordData.patientBirthDate),
         diseaseId: recordData.diseaseId || 0,
         ubsId: recordData.ubsId || 0,
         status: recordData.status,
@@ -236,18 +238,49 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
     },
   });
 
-  // Form submission handler
   const onSubmit = (data: MedicalRecordFormValues) => {
-    // Convert string dates to ISO format for the backend
-    const formattedData = {
-      ...data,
-      patientBirthDate: new Date(data.patientBirthDate).toISOString(),
-    };
+  const formatDate = (value: any) => {
+    const date = typeof value === "string" ? new Date(value) : value;
+    return date instanceof Date && !isNaN(date.getTime()) ? date : new Date();
+  };
+
+  const formatted = {
+    ...data,
+    patientBirthDate: formatDate(data.patientBirthDate),
+    data: {
+      ...data.data,
+      monitoramento_sifilis_congenita: {
+        ...data.data.monitoramento_sifilis_congenita,
+        data: formatDate(data.data.monitoramento_sifilis_congenita.data),
+        data_nascimento: formatDate(data.data.monitoramento_sifilis_congenita.data_nascimento),
+      },
+      acompanhamento_ambulatorio_alto_risco: {
+        ...data.data.acompanhamento_ambulatorio_alto_risco,
+        data_primeira_consulta: formatDate(data.data.acompanhamento_ambulatorio_alto_risco.data_primeira_consulta),
+        primeiro_mes: {
+          ...data.data.acompanhamento_ambulatorio_alto_risco.primeiro_mes,
+          data: formatDate(data.data.acompanhamento_ambulatorio_alto_risco.primeiro_mes.data),
+        },
+        terceiro_mes: {
+          ...data.data.acompanhamento_ambulatorio_alto_risco.terceiro_mes,
+          data: formatDate(data.data.acompanhamento_ambulatorio_alto_risco.terceiro_mes.data),
+        },
+        sexto_mes: {
+          ...data.data.acompanhamento_ambulatorio_alto_risco.sexto_mes,
+          data: formatDate(data.data.acompanhamento_ambulatorio_alto_risco.sexto_mes.data),
+        },
+        decimo_oito_mes: {
+          ...data.data.acompanhamento_ambulatorio_alto_risco.decimo_oito_mes,
+          data: formatDate(data.data.acompanhamento_ambulatorio_alto_risco.decimo_oito_mes.data),
+        },
+      },
+    },
+  };
 
     if (isEdit && recordId) {
-      updateMutation.mutate(formattedData);
+      updateMutation.mutate(formatted);
     } else {
-      createMutation.mutate(formattedData);
+      createMutation.mutate(formatted);
     }
   };
 
@@ -403,7 +436,10 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
                           <FormItem>
                             <FormLabel>Data de Registro</FormLabel>
                             <FormControl>
-                              <Input type="date" disabled={isView} {...field} />
+                              <Input type="date"
+                                disabled={isView}
+                                value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
+                                onChange={(e) => field.onChange(new Date(e.target.value))} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -433,7 +469,12 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
                           <FormItem>
                             <FormLabel>Data de Nascimento</FormLabel>
                             <FormControl>
-                              <Input type="date" disabled={isView} {...field} />
+                              <Input
+                                type="date"
+                                disabled={isView}
+                                value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
+                                onChange={(e) => field.onChange(new Date(e.target.value))}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -691,7 +732,7 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
                         name="data.historico_hospitalar.semanas_apgar"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Semanas APGAR</FormLabel>
+                            <FormLabel>Semanas A/PGAR</FormLabel>
                             <FormControl>
                               <Input disabled={isView} {...field} />
                             </FormControl>
@@ -1037,7 +1078,10 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
                           <FormItem>
                             <FormLabel>Data da Primeira Consulta</FormLabel>
                             <FormControl>
-                              <Input type="date" disabled={isView} {...field} />
+                              <Input type="date"
+                                disabled={isView}
+                                value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
+                                onChange={(e) => field.onChange(new Date(e.target.value))}/>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1069,7 +1113,10 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
                             <FormItem>
                               <FormLabel>Data</FormLabel>
                               <FormControl>
-                                <Input type="date" disabled={isView} {...field} />
+                                <Input type="date"
+                                disabled={isView}
+                                value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
+                                onChange={(e) => field.onChange(new Date(e.target.value))}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -1116,7 +1163,10 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
                             <FormItem>
                               <FormLabel>Data</FormLabel>
                               <FormControl>
-                                <Input type="date" disabled={isView} {...field} />
+                                <Input type="date"
+                                disabled={isView}
+                                value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
+                                onChange={(e) => field.onChange(new Date(e.target.value))}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -1163,7 +1213,10 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
                             <FormItem>
                               <FormLabel>Data</FormLabel>
                               <FormControl>
-                                <Input type="date" disabled={isView} {...field} />
+                                <Input type="date"
+                                disabled={isView}
+                                value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
+                                onChange={(e) => field.onChange(new Date(e.target.value))}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -1210,7 +1263,10 @@ export function MedicalRecordForm({ recordId, isEdit = false, isView = false, on
                             <FormItem>
                               <FormLabel>Data</FormLabel>
                               <FormControl>
-                                <Input type="date" disabled={isView} {...field} />
+                                <Input type="date"
+                                disabled={isView}
+                                value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
+                                onChange={(e) => field.onChange(new Date(e.target.value))}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>

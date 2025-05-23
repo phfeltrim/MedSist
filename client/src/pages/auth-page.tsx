@@ -78,33 +78,33 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row max-w-6xl mx-auto shadow-xl">
       {/* Hero Section */}
-      <div className="bg-primary-500 text-white md:w-1/2 p-8 flex flex-col justify-center">
+      <div className="bg-primary-500 text-black md:w-1/2 p-8 flex flex-col justify-center">
         <div className="max-w-md mx-auto">
           <div className="flex items-center mb-6">
             <HospitalIcon className="h-8 w-8 mr-2" />
-            <h1 className="text-3xl font-heading font-bold">UBS Manager</h1>
+            <h1 className="text-3xl font-heading font-bold">UBS Maneger</h1>
           </div>
           <h2 className="text-2xl font-heading font-semibold mb-4">Gerenciamento de Unidades Básicas de Saúde</h2>
-          <p className="text-white/80 mb-6">
+          <p className="text-black/80 mb-6">
             Uma plataforma completa para gerenciar UBS, funcionários, doenças e prontuários médicos. 
             Acesse informações em tempo real e melhore a gestão da saúde pública.
           </p>
           <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-white/10 p-4 rounded-lg">
+            <div className="bg-black/10 p-4 rounded-lg">
               <h3 className="font-medium mb-2">Gestão de UBS</h3>
-              <p className="text-sm text-white/70">Cadastre e gerencie unidades de saúde em um só lugar</p>
+              <p className="text-sm text-black/70">Cadastre e gerencie unidades de saúde em um só lugar</p>
             </div>
-            <div className="bg-white/10 p-4 rounded-lg">
+            <div className="bg-black/10 p-4 rounded-lg">
               <h3 className="font-medium mb-2">Prontuários</h3>
-              <p className="text-sm text-white/70">Acesso rápido e seguro aos prontuários médicos</p>
+              <p className="text-sm text-black/70">Acesso rápido e seguro aos prontuários médicos</p>
             </div>
-            <div className="bg-white/10 p-4 rounded-lg">
+            <div className="bg-black/10 p-4 rounded-lg">
               <h3 className="font-medium mb-2">Equipe Médica</h3>
-              <p className="text-sm text-white/70">Gerencie médicos, enfermeiros e administrativos</p>
+              <p className="text-sm text-black/70">Gerencie médicos, enfermeiros e administrativos</p>
             </div>
-            <div className="bg-white/10 p-4 rounded-lg">
+            <div className="bg-black/10 p-4 rounded-lg">
               <h3 className="font-medium mb-2">Estatísticas</h3>
-              <p className="text-sm text-white/70">Análise de dados para tomada de decisões</p>
+              <p className="text-sm text-black/70">Análise de dados para tomada de decisões</p>
             </div>
           </div>
         </div>

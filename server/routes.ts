@@ -164,6 +164,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+ 
+  // Reports route
+    app.get("/api/reports", async (req, res, next) => {
+  try {
+    const { ubsId, diseaseId, startDate, endDate } = req.query;
+
+    let records = await storage.getMedicalRecordsReport();
+
+    if (ubsId) {
+      records = records.filter(r => r.ubsName && r.ubsName.toLowerCase().includes(ubsId.toString().toLowerCase()));
+    }
+
+    if (diseaseId) {
+      records = records.filter(r => r.diseaseName && r.diseaseName.toLowerCase().includes(diseaseId.toString().toLowerCase()));
+    }
+
+    if (startDate) {
+      const start = new Date(startDate.toString());
+      records = records.filter(r => r.createdAt && new Date(r.createdAt) >= start);
+    }
+
+    if (endDate) {
+      const end = new Date(endDate.toString());
+      records = records.filter(r => r.createdAt && new Date(r.createdAt) <= end);
+    }
+
+    const formatted = records.map((r) => ({
+      ID: r.id,
+      "Paciente": r.patientName,
+      "Data de nascimento": r.patientBirthDate,
+      "Doença": r.diseaseName ?? "-",
+      "UBS": r.ubsName ?? "-",
+      "Profissional": r.employeeName ?? "-",
+      "Status": r.status,
+      "Criado em": r.createdAt,
+    }));
+
+    res.json(formatted);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+
   // Disease routes
   app.get("/api/diseases", async (req, res, next) => {
     try {
@@ -263,6 +308,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/medical-records", checkRole(["admin", "doctor", "nurse"]), async (req, res, next) => {
     try {
+      if (typeof req.body.patientBirthDate === "string") {
+      req.body.patientBirthDate = new Date(req.body.patientBirthDate);
+    }
+
+    if (req.body?.data?.monitoramento_sifilis_congenita) {
+      req.body.data.monitoramento_sifilis_congenita.data = new Date(req.body.data.monitoramento_sifilis_congenita.data);
+      req.body.data.monitoramento_sifilis_congenita.data_nascimento = new Date(req.body.data.monitoramento_sifilis_congenita.data_nascimento);
+    }
+
+    if (req.body?.data?.acompanhamento_ambulatorio_alto_risco) {
+      const alto = req.body.data.acompanhamento_ambulatorio_alto_risco;
+
+      alto.data_primeira_consulta = new Date(alto.data_primeira_consulta);
+      alto.primeiro_mes.data = new Date(alto.primeiro_mes.data);
+      alto.terceiro_mes.data = new Date(alto.terceiro_mes.data);
+      alto.sexto_mes.data = new Date(alto.sexto_mes.data);
+      alto.decimo_oito_mes.data = new Date(alto.decimo_oito_mes.data);
+    }
       const parseResult = insertMedicalRecordSchema.safeParse(req.body);
       if (!parseResult.success) {
         return res.status(400).json({ message: "Invalid data", errors: parseResult.error.flatten() });

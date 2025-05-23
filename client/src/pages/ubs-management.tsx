@@ -41,9 +41,6 @@ export default function UbsManagement() {
             { label: "Início", path: "/" },
             { label: "Unidades UBS", path: "/ubs" },
           ]}
-          actionLabel="Nova UBS"
-          actionPath="#"
-          onActionClick={handleNewUbs}
         />
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">

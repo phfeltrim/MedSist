@@ -13,6 +13,7 @@ import UbsManagement from "@/pages/ubs-management";
 import EmployeeManagement from "@/pages/employee-management";
 import DiseaseManagement from "@/pages/disease-management";
 import MedicalRecords from "@/pages/medical-records";
+import Reports from "@/pages/reports";
 
 function Router() {
   return (
@@ -22,6 +23,7 @@ function Router() {
       <ProtectedRoute path="/employees" component={EmployeeManagement} roles={["admin"]} />
       <ProtectedRoute path="/diseases" component={DiseaseManagement} roles={["admin", "doctor"]} />
       <ProtectedRoute path="/medical-records" component={MedicalRecords} roles={["admin", "doctor", "nurse"]} />
+      <ProtectedRoute path="/reports" component={Reports} roles={["admin", "doctor", "nurse"]} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>

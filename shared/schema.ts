@@ -91,9 +91,9 @@ export const insertDiseaseSchema = createInsertSchema(diseases).omit({
 export const sifilesCongenitaSchema = z.object({
   monitoramento_sifilis_congenita: z.object({
     matricula: z.string(),
-    data: z.string(),
+    data: z.date(),
     nome: z.string(),
-    data_nascimento: z.string(),
+    data_nascimento: z.date(),
     encaminhado_por: z.string(),
   }),
   historia_materna: z.object({
@@ -134,25 +134,25 @@ export const sifilesCongenitaSchema = z.object({
     observacoes: z.string(),
   }),
   acompanhamento_ambulatorio_alto_risco: z.object({
-    data_primeira_consulta: z.string(),
+    data_primeira_consulta: z.date(),
     exame_sorologia: z.string(),
     primeiro_mes: z.object({
-      data: z.string(),
+      data: z.date(),
       resultado: z.string(),
       tratamento: z.string(),
     }),
     terceiro_mes: z.object({
-      data: z.string(),
+      data: z.date(),
       resultado: z.string(),
       tratamento: z.string(),
     }),
     sexto_mes: z.object({
-      data: z.string(),
+      data: z.date(),
       resultado: z.string(),
       tratamento: z.string(),
     }),
     decimo_oito_mes: z.object({
-      data: z.string(),
+      data: z.date(),
       resultado: z.string(),
       tratamento: z.string(),
     }),
