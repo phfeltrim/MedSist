@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development DATABASE_URL=postgresql://postgres:1234@localhost:5432/ubs_db tsx server/index.ts",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --target=node20 --outfile=dist/index.mjs && copy .env dist\\.env",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --target=node20 --outfile=dist/index.mjs",
     "start": "cross-env NODE_ENV=production DATABASE_URL=postgresql://postgres:1234@localhost:5432/ubs_db node dist/index.mjs",
     "check": "tsc",
     "db:push": "drizzle-kit push",
