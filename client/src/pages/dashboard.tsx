@@ -85,12 +85,18 @@ const mockActivities = [
     timestamp: "Ontem, 09:15"
   }
 ];
-
+type Statistics = {
+  ubsCount: number;
+  doctorCount: number;
+  recordCount: number;
+  activeRecordCount: number;
+};
 export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: statistics, isLoading } = useQuery({
+  const { data: statistics, isLoading, error } = useQuery<Statistics>({
     queryKey: ["/api/statistics"],
+    queryFn: () => fetcher("/api/statistics"),
     staleTime: 60000, // 1 minute
   });
 

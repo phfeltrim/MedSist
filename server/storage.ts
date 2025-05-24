@@ -260,18 +260,27 @@ export class DatabaseStorage implements IStorage {
   // Statistics
   async getStatistics(): Promise<any> {
     const ubsCount = await db.select({ count: ubs.id }).from(ubs);
-    const doctorCount = await db.select({ count: employees.id }).from(employees).where(eq(employees.role, 'doctor'));
-    const recordCount = await db.select({ count: medicalRecords.id }).from(medicalRecords);
-    const activeRecordCount = await db.select({ count: medicalRecords.id }).from(medicalRecords).where(eq(medicalRecords.status, 'active'));
+    const doctorCount = await db
+      .select({ count: employees.id })
+      .from(employees)
+      .where(eq(employees.role, "doctor"));
+
+    const recordCount = await db
+      .select({ count: medicalRecords.id })
+      .from(medicalRecords);
+
+    const activeRecordCount = await db
+      .select({ count: medicalRecords.id })
+      .from(medicalRecords)
+      .where(eq(medicalRecords.status, "active"));
 
     return {
-      ubsCount: ubsCount[0]?.count || 0,
-      doctorCount: doctorCount[0]?.count || 0,
-      recordCount: recordCount[0]?.count || 0,
-      activeRecordCount: activeRecordCount[0]?.count || 0
+      ubsCount: Number(ubsCount[0]?.count ?? 0),
+      doctorCount: Number(doctorCount[0]?.count ?? 0),
+      recordCount: Number(recordCount[0]?.count ?? 0),
+      activeRecordCount: Number(activeRecordCount[0]?.count ?? 0),
     };
   }
-}
 
 // In memory implementation for fallback
 export class MemStorage implements IStorage {
